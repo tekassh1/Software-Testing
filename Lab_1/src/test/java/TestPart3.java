@@ -1,137 +1,83 @@
-import org.example.Part3.*;
+import org.example.Part3.Arthur;
+import org.example.Part3.Enums.Actions;
+import org.example.Part3.Enums.Location;
+import org.example.Part3.Enums.Place;
+import org.example.Part3.LocationArea;
+import org.example.Part3.TwoHeadedMan;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestPart3 {
 
-    @Test
-    public void testLeftHeadAction() {
-        TwoHeadedMan man = new TwoHeadedMan();
+    LocationArea street;
+    LocationArea room;
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
+    Arthur arthur;
+    TwoHeadedMan twoHeadedMan;
 
-        man.leftHeadAction();
+    @BeforeEach
+    public void setUp() {
+        street = new LocationArea(Location.STREET);
+        room = new LocationArea(Location.ROOM);
 
-        String expected = "но зато " + man.getLeftHead().getName() + " улыбалась широко и непринужденно. \r\n";
-        assertEquals(expected, outputStream.toString());
+        arthur = new Arthur("Arthur", street);
+        twoHeadedMan = new TwoHeadedMan("Two Headed Man", room);
     }
 
     @Test
-    public void testRightHeadAction() {
-        TwoHeadedMan man = new TwoHeadedMan();
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
-
-        man.rightHeadAction();
-
-        String expected = man.getRightHead().getName() + ", казалось, была всецело занята этим.\r\n";
-        assertEquals(expected, outputStream.toString());
+    public void testArthurEnteredNewArea() {
+        arthur.changeLocationArea(room);
+        assertEquals(arthur.getLocationArea(), room);
     }
 
     @Test
-    public void testLeftHandAction() {
-        TwoHeadedMan man = new TwoHeadedMan();
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
-
-        man.leftHandAction();
-
-        String expected = "ковырял " + man.getLeftHand().getSide() + " рукой в зубах " + man.getRightHead().getName() + "\r\n";
-        assertEquals(expected, outputStream.toString());
+    public void testArthurEnteredTwoHeadedArea() {
+        arthur.changeLocationArea(room);
+        assertTrue(arthur.getTrustlessLevel() > 1);
     }
 
     @Test
-    public void testFeetAction() {
-        TwoHeadedMan man = new TwoHeadedMan();
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
-
-        man.feetAction();
-
-        String expected = "положил " + man.getFeet().all() + " на пуль управления\r\n";
-        assertEquals(expected, outputStream.toString());
+    public void testArthurExitedTwoHeadedArea() {
+        arthur.changeLocationArea(room);
+        arthur.changeLocationArea(street);
+        assertTrue(arthur.getTrustlessLevel() == 1);
     }
 
     @Test
-    public void testRelaxInChair() {
-        TwoHeadedMan man = new TwoHeadedMan();
-        Chair chair = new Chair();
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
-
-        man.relaxInChair(chair);
-
-        String expectedOutput = man.getName() + " развалился в кресле.\r\n" +
-                "положил " + man.getFeet().all() + " на пуль управления\r\n" +
-                "ковырял " + man.leftHand.getSide() + " рукой в зубах " + man.getRightHead().getName() + "\r\n" +
-                man.getRightHead().getName() + ", казалось, была всецело занята этим.\r\n" +
-                "но зато " + man.getLeftHead().getName() + " улыбалась широко и непринужденно. \r\n";
-        assertEquals(expectedOutput, outputStream.toString());
+    public void testArthurJarOpenedCoefficient() {
+        arthur.changeLocationArea(room);
+        assertTrue(arthur.getJawOpenedCoefficient() > 1);
     }
 
     @Test
-    public void testEnterRoom() {
-        Arthur arthur = new Arthur();
-        Room room = new Room();
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
-
-        arthur.enterRoom(room);
-
-        String expectedOutput = arthur.getName() + " нервничая, вошел следом и был ошеломлен, увидев развалившегося в кресле человека.\n" +
-                "Двухголовый человек развалился в кресле.\n" +
-                "положил Обе ноги на пуль управления\n" +
-                "ковырял левая рукой в зубах правая голова\n" +
-                "правая голова, казалось, была всецело занята этим.\n" +
-                "но зато левая голова улыбалась широко и непринужденно. \n" +
-                "Количество вещей, видя которые, Артур не верил своим глазам, все росло.\n" +
-                "Его челюсть отвисла.\n";
-
-        assertEquals(expectedOutput, outputStream.toString().replace("\r", ""));
+    public void testArthurDefaultPlace() {
+        assertEquals(arthur.getPlace(), Place.FLOOR);
     }
 
     @Test
-    public void testBeShocked() {
-        Arthur arthur = new Arthur();
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
-
-        arthur.beShocked();
-
-        String expectedOutput = "Количество вещей, видя которые, " + arthur.getName() + " не верил своим глазам, все росло.\n" +
-                "Его челюсть отвисла.\n";
-        assertEquals(expectedOutput, outputStream.toString().replace("\r", ""));
+    public void testTwoHeadedLeaningOnChair() {
+        twoHeadedMan.act(Actions.LEAN_ON_CHAIR);
+        assertEquals(twoHeadedMan.getPlace(), Place.CHAIR);
     }
 
     @Test
-    public void testScene() {
-        Scene scene = new Scene();
+    public void testTwoHeadedPeakNoseWhileSitting() {
+        twoHeadedMan.act(Actions.LEAN_ON_CHAIR);
+        twoHeadedMan.act(Actions.PICK_NOSE);
+        assertTrue(twoHeadedMan.getSmileCoefficient() > 1);
+    }
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
+    @Test
+    public void testTwoHeadedLeaveRoom() {
+        twoHeadedMan.changeLocationArea(street);
+        assertEquals(twoHeadedMan.getLocationArea(), street);
+    }
 
-        scene.run();
-
-        String expectedOutput = "Артур нервничая, вошел следом и был ошеломлен, увидев развалившегося в кресле человека.\n" +
-                "Двухголовый человек развалился в кресле.\n" +
-                "положил Обе ноги на пуль управления\n" +
-                "ковырял левая рукой в зубах правая голова\n" +
-                "правая голова, казалось, была всецело занята этим.\n" +
-                "но зато левая голова улыбалась широко и непринужденно. \n" +
-                "Количество вещей, видя которые, Артур не верил своим глазам, все росло.\n" +
-                "Его челюсть отвисла.\n";
-
-        assertEquals(expectedOutput, outputStream.toString().replace("\r", ""));
+    @Test
+    public void testTwoHeadedSmilesOff() {
+        twoHeadedMan.changeLocationArea(street);
+        assertTrue(twoHeadedMan.getSmileCoefficient() == 1);
     }
 }

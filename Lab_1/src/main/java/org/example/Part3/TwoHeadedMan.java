@@ -1,51 +1,60 @@
 package org.example.Part3;
 
-import org.example.Part3.AbastractClasses.TwoHeadedPerson;
-import org.example.Part3.Enums.Sides;
+import org.example.Part3.AbstractClasses.StoryCharacter;
+import org.example.Part3.Enums.Actions;
+import org.example.Part3.Enums.CharacterState;
+import org.example.Part3.Enums.Location;
+import org.example.Part3.Enums.Place;
 
-public class TwoHeadedMan extends TwoHeadedPerson {
+public class TwoHeadedMan extends StoryCharacter {
+    Place place;
+    int smileCoefficient;
 
-    public TwoHeadedMan() {
-        super("Двухголовый человек");
-        this.leftHead = new LeftHead(Sides.LEFT);
-        this.rightHead = new RightHead(Sides.RIGHT);
-        this.leftHand = new Hand(Sides.LEFT);
-        this.rightHand = new Hand(Sides.RIGHT);
-        this.feet = new Feet();
+    public TwoHeadedMan(String name, LocationArea locationArea) {
+        super(name, locationArea);
+        place = Place.CHAIR;
+        smileCoefficient = 1;
     }
 
     @Override
-    public void leftHeadAction() {
-        leftHead.action();
+    public void act(Actions action) {
+        if (action == Actions.LEAN_ON_CHAIR) {
+            place = Place.CHAIR;
+        }
+        else if (action == Actions.PICK_NOSE && place == Place.CHAIR) {
+            characterState = CharacterState.SMILING;
+        }
+        updateStates();
     }
 
     @Override
-    public void rightHeadAction() {
-        rightHead.action();
+    public void changeLocationArea(LocationArea newLocationArea) {
+        this.locationArea.removeCharacter(this);
+        this.locationArea = newLocationArea;
+        locationArea.addCharacter(this);
+
+        updateStates();
     }
 
     @Override
-    public void leftHandAction() {
-        System.out.println("ковырял " + leftHand.getSide() + " рукой в зубах " + rightHead.getName());
+    public void updateStates() {
+        if (characterState == CharacterState.SMILING) {
+            smileCoefficient *= 100;
+        }
+        else if (this.locationArea.getPlace() == Location.STREET) {
+            smileCoefficient = 1;
+        }
     }
 
-    @Override
-    public void rightHandAction() {
-
+    public Place getPlace() {
+        return place;
     }
 
-    @Override
-    public void feetAction() {
-        System.out.println("положил " + feet.all() + " на пуль управления");
+    public int getSmileCoefficient() {
+        return smileCoefficient;
     }
 
-    public void relaxInChair(Chair chair) {
-        chair.sit(this);
-        feetAction();
-
-        leftHandAction();
-        rightHandAction();
-        rightHeadAction();
-        leftHeadAction();
+    public LocationArea getLocationArea() {
+        return locationArea;
     }
 }

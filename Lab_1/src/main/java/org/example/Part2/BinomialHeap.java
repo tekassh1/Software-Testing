@@ -136,18 +136,11 @@ public class BinomialHeap {
 
                 if (temp1.degree < temp2.degree) {
 
-                    if ((temp1.sibling == null)
-                            || (temp1.sibling.degree
-                            > temp2.degree)) {
-                        BinomialHeapNode tmp = temp2;
-                        temp2 = temp2.sibling;
-                        tmp.sibling = temp1.sibling;
-                        temp1.sibling = tmp;
-                        temp1 = tmp.sibling;
-                    }
-                    else {
-                        temp1 = temp1.sibling;
-                    }
+                    BinomialHeapNode tmp = temp2;
+                    temp2 = temp2.sibling;
+                    tmp.sibling = temp1.sibling;
+                    temp1.sibling = tmp;
+                    temp1 = tmp.sibling;
                 }
 
                 else {
@@ -207,13 +200,8 @@ public class BinomialHeap {
                 }
 
                 else {
+                    Nodes = nextTemp;
 
-                    if (prevTemp == null) {
-                        Nodes = nextTemp;
-                    }
-                    else {
-                        prevTemp.sibling = nextTemp;
-                    }
                     temp.parent = nextTemp;
                     temp.sibling = nextTemp.child;
                     nextTemp.child = temp;
@@ -292,18 +280,12 @@ public class BinomialHeap {
             size = 0;
         }
         else {
-            if ((Nodes == null) && (fakeNode != null)) {
-                Nodes = fakeNode.reverse(null);
+            if ((Nodes != null) && (fakeNode == null)) {
                 size = Nodes.getSize();
             }
             else {
-                if ((Nodes != null) && (fakeNode == null)) {
-                    size = Nodes.getSize();
-                }
-                else {
-                    unionNodes(fakeNode.reverse(null));
-                    size = Nodes.getSize();
-                }
+                unionNodes(fakeNode.reverse(null));
+                size = Nodes.getSize();
             }
         }
 

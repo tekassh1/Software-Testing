@@ -2,15 +2,11 @@ package org.example;
 
 import org.example.Part1.MyCos;
 import org.example.Part2.BinomialHeap;
-import org.example.Part3.Scene;
 
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-//        runPart1();
-//        runPart2();
-        runPart3();
     }
 
     public static void runPart1() {
@@ -39,7 +35,6 @@ public class Main {
     }
 
     public static void runPart3() {
-        Scene scene = new Scene();
-        scene.run();
+
     }
 }
