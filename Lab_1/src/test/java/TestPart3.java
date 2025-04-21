@@ -65,13 +65,25 @@ public class TestPart3 {
     public void testTwoHeadedPeakNoseWhileSitting() {
         twoHeadedMan.act(Actions.LEAN_ON_CHAIR);
         twoHeadedMan.act(Actions.PICK_NOSE);
-        assertTrue(twoHeadedMan.getSmileCoefficient() > 1);
+
+        assertAll("All states are correct",
+                () -> assertTrue(twoHeadedMan.getSmileCoefficient() > 1),
+                () -> assertEquals(street.getCharacters().size(), 1),
+                () -> assertEquals(room.getCharacters().size(), 1),
+                () -> assertTrue(twoHeadedMan.getPlace() == Place.CHAIR)
+        );
     }
 
     @Test
     public void testTwoHeadedLeaveRoom() {
         twoHeadedMan.changeLocationArea(street);
         assertEquals(twoHeadedMan.getLocationArea(), street);
+
+        assertAll("All states are correct",
+                () -> assertTrue(arthur.getJawOpenedCoefficient() == 1),
+                () -> assertNotEquals(street.getCharacters().size(), 0),
+                () -> assertTrue(street.getCharacters().contains(twoHeadedMan))
+        );
     }
 
     @Test

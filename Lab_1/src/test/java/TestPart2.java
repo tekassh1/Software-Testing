@@ -227,4 +227,19 @@ public class TestPart2 {
 
         assertEquals(5, min);
     }
+
+    @Test
+    @DisplayName("Test decrease not existing")
+    void testDecreaseNotExisting() {
+        BinomialHeap heap = new BinomialHeap();
+
+        heap.insert(10);
+        heap.insert(20);
+        heap.insert(30);
+        heap.insert(40);
+
+        heap.decreaseKeyValue(199, 5);
+
+        assertEquals(10, heap.findMinimum());
+    }
 }
