@@ -14,6 +14,7 @@ import org.mockito.MockedStatic;
 import java.util.ArrayList;
 import java.util.random.RandomGenerator;
 
+import static java.lang.Double.NaN;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -34,11 +35,17 @@ public class SystemTest {
     // First equation
 
     @ParameterizedTest
-    @CsvFileSource(resources = "values/testFirstEquationAllMocked.csv", delimiter = ';', useHeadersInDisplayName = true)
-    void testFirstEquationWithAllStubs(double x,
-                                       double sin, double cos, double tan, double cot, double sec, double csc,
-                                       double expected)
-    {
+    @CsvFileSource(resources = "values/FirstEquationMock.csv", delimiter = ';', useHeadersInDisplayName = true)
+    void testFirstEquationWithAllMocked(
+            double x,
+            double sin,
+            double cos,
+            double tan, 
+            double cot, 
+            double sec, 
+            double csc,
+            double expected
+    ) {
         try (MockedStatic<Sin> sinMock = mockStatic(Sin.class);
              MockedStatic<Cos> cosMock = mockStatic(Cos.class);
              MockedStatic<Tan> tanMock = mockStatic(Tan.class);
@@ -67,11 +74,17 @@ public class SystemTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "values/testFirstEquationWithCsc.csv", delimiter = ';', useHeadersInDisplayName = true)
-    void testFirstEquationWithAllStubs(double x,
-                                       double sin, double cos, double tan, double cot, double sec,
-                                       double expected)
-    {
+    @CsvFileSource(resources = "values/FirstEquationMock.csv", delimiter = ';', useHeadersInDisplayName = true)
+    void testFirstEquationWithCsc(
+            double x,
+            double sin,
+            double cos,
+            double tan,
+            double cot,
+            double sec,
+            double csc,
+            double expected
+    ) {
         try (MockedStatic<Sin> sinMock = mockStatic(Sin.class);
              MockedStatic<Cos> cosMock = mockStatic(Cos.class);
              MockedStatic<Tan> tanMock = mockStatic(Tan.class);
@@ -97,11 +110,17 @@ public class SystemTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "values/testFirstEquationWithSec.csv", delimiter = ';', useHeadersInDisplayName = true)
-    void testFirstEquationWithAllStubs(double x,
-                                       double sin, double cos, double tan, double cot,
-                                       double expected)
-    {
+    @CsvFileSource(resources = "values/FirstEquationMock.csv", delimiter = ';', useHeadersInDisplayName = true)
+    void testFirstEquationWithSec(
+            double x,
+            double sin,
+            double cos,
+            double tan,
+            double cot,
+            double sec,
+            double csc,
+            double expected
+    ) {
         try (MockedStatic<Sin> sinMock = mockStatic(Sin.class);
              MockedStatic<Cos> cosMock = mockStatic(Cos.class);
              MockedStatic<Tan> tanMock = mockStatic(Tan.class);
@@ -124,11 +143,17 @@ public class SystemTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "values/testFirstEquationWithCot.csv", delimiter = ';', useHeadersInDisplayName = true)
-    void testFirstEquationWithAllStubs(double x,
-                                       double sin, double cos, double tan,
-                                       double expected)
-    {
+    @CsvFileSource(resources = "values/FirstEquationMock.csv", delimiter = ';', useHeadersInDisplayName = true)
+    void testFirstEquationWithCot(
+            double x,
+            double sin,
+            double cos,
+            double tan,
+            double cot,
+            double sec,
+            double csc,
+            double expected
+    ) {
         try (MockedStatic<Sin> sinMock = mockStatic(Sin.class);
              MockedStatic<Cos> cosMock = mockStatic(Cos.class);
              MockedStatic<Tan> tanMock = mockStatic(Tan.class))
@@ -148,11 +173,17 @@ public class SystemTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "values/testFirstEquationWithTan.csv", delimiter = ';', useHeadersInDisplayName = true)
-    void testFirstEquationWithAllStubs(double x,
-                                       double sin, double cos,
-                                       double expected)
-    {
+    @CsvFileSource(resources = "values/FirstEquationMock.csv", delimiter = ';', useHeadersInDisplayName = true)
+    void testFirstEquationWithTan(
+            double x,
+            double sin,
+            double cos,
+            double tan,
+            double cot,
+            double sec,
+            double csc,
+            double expected
+    ) {
         try (MockedStatic<Sin> sinMock = mockStatic(Sin.class);
              MockedStatic<Cos> cosMock = mockStatic(Cos.class))
         {
@@ -169,11 +200,17 @@ public class SystemTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "values/testFirstEquationWithCos.csv", delimiter = ';', useHeadersInDisplayName = true)
-    void testFirstEquationWithAllStubs(double x,
-                                       double sin,
-                                       double expected)
-    {
+    @CsvFileSource(resources = "values/FirstEquationMock.csv", delimiter = ';', useHeadersInDisplayName = true)
+    void testFirstEquationWithAllStubs(
+            double x,
+            double sin,
+            double cos,
+            double tan,
+            double cot,
+            double sec,
+            double csc,
+            double expected
+    ) {
         try (MockedStatic<Sin> sinMock = mockStatic(Sin.class))
         {
             sinMock.when(() -> Sin.sin(x)).thenReturn(sin);
@@ -188,8 +225,17 @@ public class SystemTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "values/testFirstEquationNoMocked.csv", delimiter = ';', useHeadersInDisplayName = true)
-    void testFirstEquationWithAllFunc(double x, double expected) {
+    @CsvFileSource(resources = "values/FirstEquationMock.csv", delimiter = ';', useHeadersInDisplayName = true)
+    void testFirstEquationWithAllFunc(
+            double x,
+            double sin,
+            double cos,
+            double tan,
+            double cot,
+            double sec,
+            double csc,
+            double expected
+    ) {
         double result = Equation.solveFirstEq(x);
         double relativeError = Math.abs(expected - result) / Math.abs(expected);
         assertTrue(relativeError < eps_test);
@@ -212,10 +258,15 @@ public class SystemTest {
     // Second equation
 
     @ParameterizedTest
-    @CsvFileSource(resources = "values/testSecondEquationAllMocked.csv", delimiter = ';', useHeadersInDisplayName = true)
-    void testSecondEquationWithAllStubs(double x,
-                                        double ln, double log2, double log3, double log5, double log10,
-                                        double expected)
+    @CsvFileSource(resources = "values/SecondEquationMock.csv", delimiter = ';', useHeadersInDisplayName = true)
+    void testSecondEquationWithAllStubs(
+            double x,
+            double ln,
+            double log2,
+            double log3,
+            double log5,
+            double log10,
+            double expected)
     {
         try (MockedStatic<Ln>       lnMock      =  mockStatic(Ln.class);
              MockedStatic<Log2>     log2Mock    =  mockStatic(Log2.class);
@@ -240,10 +291,15 @@ public class SystemTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "values/testSecondEquationWithLog10.csv", delimiter = ';', useHeadersInDisplayName = true)
-    void testSecondEquationWithLog5(double x,
-                                    double ln, double log2, double log3, double log5,
-                                    double expected)
+    @CsvFileSource(resources = "values/SecondEquationMock.csv", delimiter = ';', useHeadersInDisplayName = true)
+    void testSecondEquationWithLog10(
+            double x,
+            double ln,
+            double log2,
+            double log3,
+            double log5,
+            double log10,
+            double expected)
     {
         try (MockedStatic<Ln>   lnMock   = mockStatic(Ln.class);
              MockedStatic<Log2> log2Mock = mockStatic(Log2.class);
@@ -267,10 +323,15 @@ public class SystemTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "values/testSecondEquationWithLog5.csv", delimiter = ';', useHeadersInDisplayName = true)
-    void testSecondEquationWithLog5(double x,
-                                    double ln, double log2, double log3,
-                                    double expected)
+    @CsvFileSource(resources = "values/SecondEquationMock.csv", delimiter = ';', useHeadersInDisplayName = true)
+    void testSecondEquationWithLog5(
+            double x,
+            double ln,
+            double log2,
+            double log3,
+            double log5,
+            double log10,
+            double expected)
     {
         try (MockedStatic<Ln>   lnMock   = mockStatic(Ln.class);
              MockedStatic<Log2> log2Mock = mockStatic(Log2.class);
@@ -292,10 +353,15 @@ public class SystemTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "values/testSecondEquationWithLog3.csv", delimiter = ';', useHeadersInDisplayName = true)
-    void testSecondEquationWithLog5(double x,
-                                    double ln, double log2,
-                                    double expected)
+    @CsvFileSource(resources = "values/SecondEquationMock.csv", delimiter = ';', useHeadersInDisplayName = true)
+    void testSecondEquationWithLog3(
+            double x,
+            double ln,
+            double log2,
+            double log3,
+            double log5,
+            double log10,
+            double expected)
     {
         try (MockedStatic<Ln>   lnMock   = mockStatic(Ln.class);
              MockedStatic<Log2> log2Mock = mockStatic(Log2.class))
@@ -316,10 +382,15 @@ public class SystemTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "values/testSecondEquationWithLog2.csv", delimiter = ';', useHeadersInDisplayName = true)
-    void testSecondEquationWithLog5(double x,
-                                    double ln,
-                                    double expected)
+    @CsvFileSource(resources = "values/SecondEquationMock.csv", delimiter = ';', useHeadersInDisplayName = true)
+    void testSecondEquationWithLog2(
+            double x,
+            double ln,
+            double log2,
+            double log3,
+            double log5,
+            double log10,
+            double expected)
     {
         try (MockedStatic<Ln>   lnMock   = mockStatic(Ln.class))
         {
@@ -337,9 +408,24 @@ public class SystemTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "values/testSecondEquationNoMocked.csv", delimiter = ';', useHeadersInDisplayName = true)
-    void testSecondEquationWithPureVals(double x, double expected) {
+    @CsvFileSource(resources = "values/SecondEquationMock.csv", delimiter = ';', useHeadersInDisplayName = true)
+    void testSecondEquationWithPureVals(
+            double x,
+            double ln,
+            double log2,
+            double log3,
+            double log5,
+            double log10,
+            double expected)
+    {
         assertEquals(expected, Equation.solveSecondEq(x), eps_test);
+    }
+
+    @Test
+    @DisplayName("Test second undef")
+    void testSecondUndef() {
+        double x = 1;
+        assertEquals(NaN, Equation.solveSecondEq(x), eps_test);
     }
 
     // Complete system test
@@ -382,8 +468,8 @@ public class SystemTest {
     }
 
     @Test
-    @DisplayName("Test system x == 1")
-    void testSystemUndefinedOne() {
+    @DisplayName("Test system throws sec/cos == 0")
+    void testSystemUndefinedSecCosZero() {
         try (MockedStatic<Sec> secMock = mockStatic(Sec.class);
              MockedStatic<Cos> cosMock = mockStatic(Cos.class))
         {
@@ -394,6 +480,12 @@ public class SystemTest {
 
             secMock.verify(() -> Sec.sec(anyDouble()), atLeastOnce());
         }
+    }
+
+    @Test
+    @DisplayName("Test system undefined x == 1")
+    void testSystemUndefinedOne() {
+            assertEquals(Equation.solve(1), NaN);
     }
 
     @Test
@@ -583,6 +675,34 @@ public class SystemTest {
             double relativeError = Math.abs(origVals.get(i) - eqVals.get(i)) / Math.abs(origVals.get(i));
 
             assertTrue(relativeError < eps_test);
+        }
+    }
+
+    @Test
+    @DisplayName("Inflection point x==1 equivalence left")
+    void testSystemInflectionPointSecondEquivalenceLeft() {
+        double intervalEnd = 1;
+        double intervalStart = intervalEnd - 0.5;
+
+        double last = intervalStart;
+
+        for (double i = intervalStart + 0.01; i <= intervalEnd; i += 0.001) {
+            assertTrue(Equation.solve(i) < Equation.solve(last));
+            last = i;
+        }
+    }
+
+    @Test
+    @DisplayName("Inflection point x==1 equivalence right")
+    void testSystemInflectionPointSecondEquivalenceRight() {
+        double intervalStart = 1;
+        double intervalEnd = intervalStart + 0.5;
+
+        double last = intervalStart+0.0001;
+
+        for (double i = intervalStart + 0.01; i <= intervalEnd; i += 0.001) {
+            assertTrue(Equation.solve(i) > Equation.solve(last));
+            last = i;
         }
     }
 }
