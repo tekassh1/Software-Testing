@@ -12,8 +12,8 @@ public class LoginPage extends AbstractPage {
     private final By preLoginButton = By.xpath("//span[contains(@class, 'magritte-button__label_') and text() = 'Войти']");
 
     // login page
-    private final By emailSwitch = By.xpath("//input[@data-qa='credential-type-EMAIL checked']");
-    private final By phoneNumberSwitch = By.xpath("//input[@data-qa='credential-type-PHONE checked']");
+    private final By emailSwitch = By.xpath("//div[contains(@class, 'magritte-text_') and text() = 'Почта']");
+    private final By phoneNumberSwitch = By.xpath("//div[contains(@class, 'magritte-text_') and text() = 'Телефон']");
 
     private final By emailInput = By.xpath("//input[@inputmode='email']");
     private final By loginWithPassButton = By.xpath("//button[@data-qa='expand-login-by-password']");
@@ -40,6 +40,9 @@ public class LoginPage extends AbstractPage {
 
     public ApplicantPage login(String email, String password) {
         driver.findElement(preLoginButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(emailSwitch));
+
+        driver.findElement(emailSwitch).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(emailInput));
 
         driver.findElement(emailInput).sendKeys(email);

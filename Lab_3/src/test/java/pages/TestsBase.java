@@ -29,14 +29,18 @@ public class TestsBase {
 
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--lang=ru");
+        chromeOptions.setBinary("/usr/bin/google-chrome-stable");
         chromeOptions.addArguments("--no-sandbox");
         chromeOptions.addArguments("--disable-dev-shm-usage");
+        chromeOptions.addArguments("--remote-debugging-port=9222");
+//        chromeOptions.addArguments("--no-sandbox");
+//        chromeOptions.addArguments("--disable-dev-shm-usage");
 //        chromeOptions.addArguments("--headless=new"); // Enable for speed up
 
-        chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
-        chromeOptions.setExperimentalOption("excludeSwitches", List.of("enable-automation"));
-        chromeOptions.setExperimentalOption("useAutomationExtension", false);
-        chromeOptions.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36");
+//        chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
+//        chromeOptions.setExperimentalOption("excludeSwitches", List.of("enable-automation"));
+//        chromeOptions.setExperimentalOption("useAutomationExtension", false);
+//        chromeOptions.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36");
 
         WebDriver chromeDriver = new ChromeDriver(chromeOptions);
 
