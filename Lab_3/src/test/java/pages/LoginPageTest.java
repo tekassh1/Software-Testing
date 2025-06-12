@@ -53,4 +53,20 @@ public class LoginPageTest extends TestsBase {
             assertTrue(applicantPage.isApplicantPage());
         });
     }
+
+    @Test
+    public void loginPageSsoTest() {
+        drivers.parallelStream().forEach(driver -> {
+            driver.get(URL);
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WelcomePage welcomePage = new WelcomePage(driver, wait);
+
+            LoginPage loginPage = welcomePage.goToLoginPage();
+
+            ApplicantPage applicantPage = loginPage.loginWithSSO();
+
+            assertTrue(applicantPage.isApplicantPage());
+        });
+    }
+
 }

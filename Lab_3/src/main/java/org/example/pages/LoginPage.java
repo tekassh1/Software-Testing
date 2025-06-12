@@ -12,14 +12,19 @@ public class LoginPage extends AbstractPage {
     private final By preLoginButton = By.xpath("//span[contains(@class, 'magritte-button__label_') and text() = 'Войти']");
 
     // login page
-    private final By emailSwitch = By.xpath("//input[@data-qa='credential-type-EMAIL checked']");
-    private final By phoneNumberSwitch = By.xpath("//input[@data-qa='credential-type-PHONE checked']");
+    private final By emailSwitch = By.xpath("//div[contains(@class, 'magritte-text_') and text() = 'Почта']");
+    private final By phoneNumberSwitch = By.xpath("//div[contains(@class, 'magritte-text_') and text() = 'Телефон']");
 
     private final By emailInput = By.xpath("//input[@inputmode='email']");
     private final By loginWithPassButton = By.xpath("//button[@data-qa='expand-login-by-password']");
 
     private final By passwordInput = By.xpath("//input[@name='password']");
     private final By loginButton = By.xpath("//button[@data-qa='submit-button']");
+
+    // SSO
+    private final By loginWithSsoButton = By.xpath("//button[@data-qa='account-login-social-show-more']");
+    private final By loginWithOkButton = By.xpath("//a[@data-qa='applicant-login-social-ok']");
+    private final By loginWithVKButton = By.xpath("//a[@data-qa='applicant-login-social-ok']");
 
     public LoginPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
@@ -40,6 +45,9 @@ public class LoginPage extends AbstractPage {
 
     public ApplicantPage login(String email, String password) {
         driver.findElement(preLoginButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(emailSwitch));
+
+        driver.findElement(emailSwitch).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(emailInput));
 
         driver.findElement(emailInput).sendKeys(email);
@@ -50,6 +58,18 @@ public class LoginPage extends AbstractPage {
         driver.findElement(passwordInput).sendKeys(password);
 
         driver.findElement(loginButton).click();
+        return new ApplicantPage(driver, wait).waitUntilLoaded();
+    }
+
+    public ApplicantPage loginWithSSO() {
+        driver.findElement(preLoginButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(emailSwitch));
+
+        driver.findElement(loginWithSsoButton).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(loginWithOkButton));
+
+        driver.findElement(loginWithOkButton).click();
+
         return new ApplicantPage(driver, wait).waitUntilLoaded();
     }
 }
