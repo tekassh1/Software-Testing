@@ -1,9 +1,12 @@
 package org.example.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+import java.util.Scanner;
 
 public class LoginPage extends AbstractPage {
 
@@ -21,10 +24,11 @@ public class LoginPage extends AbstractPage {
     private final By passwordInput = By.xpath("//input[@name='password']");
     private final By loginButton = By.xpath("//button[@data-qa='submit-button']");
 
+    private final By captcha = By.xpath("//input[@data-qa='account-captcha-input']");
+
     // SSO
     private final By loginWithSsoButton = By.xpath("//button[@data-qa='account-login-social-show-more']");
-    private final By loginWithOkButton = By.xpath("//a[@data-qa='applicant-login-social-ok']");
-    private final By loginWithVKButton = By.xpath("//a[@data-qa='applicant-login-social-ok']");
+    private final By loginWithVKButton = By.xpath("//a[@data-qa='applicant-login-social-vk']");
 
     public LoginPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
@@ -45,31 +49,57 @@ public class LoginPage extends AbstractPage {
 
     public ApplicantPage login(String email, String password) {
         driver.findElement(preLoginButton).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(emailSwitch));
 
-        driver.findElement(emailSwitch).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(emailInput));
+        try {
+            WebElement emailField = wait.until(ExpectedConditions.visibilityOfElementLocated(emailInput));
+            String currentEmail = emailField.getAttribute("value");
 
-        driver.findElement(emailInput).sendKeys(email);
+            if (currentEmail == null || currentEmail.isEmpty() || !currentEmail.equals(email)) {
+                emailField.clear();
+                emailField.sendKeys(email);
+            }
+        } catch (TimeoutException e) {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(emailSwitch)).click();
+            wait.until(ExpectedConditions.visibilityOfElementLocated(emailInput)).sendKeys(email);
+        }
 
         driver.findElement(loginWithPassButton).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(passwordInput));
 
+        wait.until(ExpectedConditions.visibilityOfElementLocated(passwordInput));
         driver.findElement(passwordInput).sendKeys(password);
 
         driver.findElement(loginButton).click();
-        return new ApplicantPage(driver, wait).waitUntilLoaded();
+
+        try {
+            WebDriverWait captchaWait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            captchaWait.until(ExpectedConditions.visibilityOfElementLocated(captcha));
+
+            System.out.println("Login captcha detected!");
+
+            new Actions(driver)
+                    .pause(Duration.ofMillis(40000))
+                    .perform();
+
+        } catch (TimeoutException e) {
+
+        }
+
+        try {
+            return new ApplicantPage(driver, wait).waitUntilLoaded();
+        } catch (Exception e) {
+            throw new RuntimeException("");
+        }
     }
 
-    public ApplicantPage loginWithSSO() {
+    public VkLoginPage loginWithSSO() {
         driver.findElement(preLoginButton).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(emailSwitch));
 
         driver.findElement(loginWithSsoButton).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(loginWithOkButton));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(loginWithVKButton));
 
-        driver.findElement(loginWithOkButton).click();
+        driver.findElement(loginWithVKButton).click();
 
-        return new ApplicantPage(driver, wait).waitUntilLoaded();
+        return new VkLoginPage(driver, wait).waitUntilLoaded();
     }
 }

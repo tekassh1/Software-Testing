@@ -23,6 +23,9 @@ public class TestsBase {
     protected static String hhUsername;
     protected static String hhPass;
 
+    protected static String vkEmail;
+    protected static String vkPassword;
+
     @BeforeEach
     public void setUp() throws IOException {
         drivers = new ArrayList<>();
@@ -48,8 +51,12 @@ public class TestsBase {
         prop.load(input);
 
         URL = prop.getProperty("url");
+
         hhUsername = prop.getProperty("username");
         hhPass = prop.getProperty("password");
+
+        vkEmail = prop.getProperty("vk-email");
+        vkPassword = prop.getProperty("vk-password");
     }
 
     @AfterEach
