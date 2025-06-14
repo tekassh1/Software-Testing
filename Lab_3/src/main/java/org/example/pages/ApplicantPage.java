@@ -302,8 +302,6 @@ public class ApplicantPage extends AbstractPage {
         String vacancy = JOBS[(int) (Math.random() * JOBS.length)];
         searchForVacancy(vacancy);
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-
         List<WebElement> vacancyItems = wait.until(
                 ExpectedConditions.presenceOfAllElementsLocatedBy(
                         By.xpath("//div[@data-qa='vacancy-serp__vacancy']")
@@ -312,22 +310,24 @@ public class ApplicantPage extends AbstractPage {
 
         WebElement randomVacancy = vacancyItems.get(new Random().nextInt(vacancyItems.size()));
 
-        String vacancyId = randomVacancy.getAttribute("data-vacancy-id");
-        if (vacancyId == null) {
-            WebElement link = randomVacancy.findElement(By.xpath(".//a[@data-qa='serp-item__title']"));
-            String href = link.getAttribute("href");
-            vacancyId = href.substring(href.indexOf("vacancy/") + 8, href.indexOf("?"));
-        }
+        WebElement link = randomVacancy.findElement(By.xpath(".//a[@data-qa='vacancy-serp__vacancy_response']"));
+        String href = link.getAttribute("href");
+        String vacancyId = href.substring(href.indexOf("vacancyId=") + 10, href.indexOf("&"));
 
         WebElement favoriteButton = randomVacancy.findElement(
                 By.xpath(".//button[@data-qa='vacancy-search-mark-favorite_false']")
         );
 
         ((JavascriptExecutor) driver).executeScript(
-                "arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});" +
-                        "arguments[0].click();",
-                favoriteButton
+                "arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});",
+                randomVacancy
         );
+
+        new Actions(driver)
+                .pause(Duration.ofMillis(2000))
+                .perform();
+
+        favoriteButton.click();
 
         try {
             WebElement closeButton = wait.until(ExpectedConditions.elementToBeClickable(
