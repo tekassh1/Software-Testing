@@ -1,0 +1,16 @@
+ssh -L 49152:stload.se.ifmo.ru:8080 s387011@helios.cs.ifmo.ru -p 2222
+
+1.
+token=497198289
+user=-2076340153
+config=1
+
+2.
+token=497198289
+user=-2076340153
+config=2
+
+3. 
+token=497198289
+user=-2076340153
+config=3
