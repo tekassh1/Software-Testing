@@ -11,8 +11,9 @@ import java.util.Scanner;
 public class LoginPage extends AbstractPage {
 
     // pre-login page
-    private final By mainLabel = By.xpath("//h2[@data-qa='title' and normalize-space(text())='Вход']");
-    private final By preLoginButton = By.xpath("//span[contains(@class, 'magritte-button__label_') and text() = 'Войти']");
+    private final By mainLabel = By.xpath("//h2[@data-qa='title' and normalize-space(text())='Поиск работы']");
+    // private final By preLoginButton = By.xpath("//span[contains(@class, 'magritte-button__label_') and text() = 'Войти']");
+    private final By preLoginButton = By.xpath("//button[@data-qa='submit-button']");
 
     // login page
     private final By emailSwitch = By.xpath("//div[contains(@class, 'magritte-text_') and text() = 'Почта']");
@@ -48,8 +49,6 @@ public class LoginPage extends AbstractPage {
     }
 
     public ApplicantPage login(String email, String password) {
-        driver.findElement(preLoginButton).click();
-
         try {
             WebElement emailField = wait.until(ExpectedConditions.visibilityOfElementLocated(emailInput));
             String currentEmail = emailField.getAttribute("value");
@@ -63,11 +62,16 @@ public class LoginPage extends AbstractPage {
             wait.until(ExpectedConditions.visibilityOfElementLocated(emailInput)).sendKeys(email);
         }
 
-        driver.findElement(loginWithPassButton).click();
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(loginWithPassButton));
+            driver.findElement(loginWithPassButton).click();
+        }
+        catch (Exception e) {
+
+        }
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(passwordInput));
         driver.findElement(passwordInput).sendKeys(password);
-
         driver.findElement(loginButton).click();
 
         try {

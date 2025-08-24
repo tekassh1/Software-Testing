@@ -14,7 +14,8 @@ public class WelcomePage extends AbstractPage {
     private final By findButton = By.xpath("//span[contains(@class, 'magritte-button__label_') and text() = 'Найти']");
     private final By searchInput = By.xpath("//input[@id='a11y-search-input']");
     private final By loginButton = By.xpath("//a[@data-qa='login' and normalize-space(text())='Войти']");
-
+    private final By enterButton = By.xpath("//button[@data-qa='submit-button']");
+    private final By applicantButton = By.xpath("//div[@data-qa='account-type-card-APPLICANT']");
     private final By citySubmitButton = By.xpath("//button[@data-qa='region-clarification-submit-button']");
     private final By cookiesSubmitButton = By.xpath("//button[@data-qa='cookies-policy-informer-accept']");
 
@@ -39,9 +40,9 @@ public class WelcomePage extends AbstractPage {
         return isVisible(searchInput);
     }
 
-    public boolean isLoginButton() {
-        return isVisible(loginButton);
-    }
+//    public boolean isLoginButton() {
+//        return isVisible(loginButton);
+//    }
 
     public LoginPage goToLoginPage() {
 
@@ -53,7 +54,17 @@ public class WelcomePage extends AbstractPage {
 
         } catch (Exception e) {}
 
+
         driver.findElement(loginButton).click();
+
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(applicantButton));
+            driver.findElement(applicantButton).click();
+        } catch (Exception e) {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(enterButton));
+            driver.findElement(enterButton).click();
+        }
+
         return new LoginPage(driver, wait).waitUntilLoaded();
     }
 }

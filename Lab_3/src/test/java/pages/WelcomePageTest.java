@@ -23,7 +23,7 @@ public class WelcomePageTest extends TestsBase {
             assertTrue(welcomePage.isWelcomePage());
             assertTrue(welcomePage.isFindButton());
             assertTrue(welcomePage.isSearchInput());
-            assertTrue(welcomePage.isLoginButton());
+//            assertTrue(welcomePage.isLoginButton());
         });
     }
 

@@ -38,7 +38,7 @@ public class ApplicantPage extends AbstractPage {
     private final By favouritesButton = By.xpath("//a[contains(@class, 'container') and contains(@href, 'favorite_vacancies')]");
 
     private final By removeAppliesConfirmButton = By.xpath("//button[@data-qa='magritte_modal_buttons_delete']");
-    private final By resumePageButton = By.xpath("//div[@data-qa='mainmenu_myResumes']");
+    private final By resumePageButton = By.xpath("//div[@data-qa='mainmenu_profileAndResumes']");
 
     public static final String[] JOBS = {
             "Менеджер", "Программист", "Дизайнер", "Аналитик", "Маркетолог",
