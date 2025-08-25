@@ -29,6 +29,8 @@ public class SettingsPage extends AbstractPage {
 
     private final By linkedAppsButton = By.xpath("//a[@data-qa='settings__my-applications']");
 
+    private final By optionsButtoon = By.xpath("//button[@data-qa='applicantProfileDesktopDrop-button']");
+
     public SettingsPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
@@ -86,18 +88,14 @@ public class SettingsPage extends AbstractPage {
         driver.findElement(currentPasswordInput).sendKeys(password);
 
         new Actions(driver)
-                .pause(Duration.ofMillis(40000))
+                .pause(Duration.ofMillis(15000))
                 .click(driver.findElement(emailSaveButton))
                 .perform();
     }
 
     public WelcomePage logOut() {
-//        By profileButton = By.cssSelector("div[data-qa='mainmenu_applicantProfile']");
-        By profileButton = By.xpath("//div[@data-qa='mainmenu_applicantProfile']");
-
-        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(profileButton));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(optionsButtoon));
+        driver.findElement(optionsButtoon).click();
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(logoutButton));
         driver.findElement(logoutButton).click();

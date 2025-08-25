@@ -12,7 +12,6 @@ import java.util.Random;
 public class ApplicantPage extends AbstractPage {
 
     private final By jobSearchInput = By.xpath("//input[@data-qa='search-input']");
-    private final By profileButton = By.xpath("//div[@class='mainmenu_applicantProfile']");
     private final By profileSettingButton = By.xpath("//a[@data-qa='mainmenu_applicantSettings']");
     private final By logoutButton = By.xpath("//button[@data-qa='mainmenu_logoffUser']");
 
@@ -33,12 +32,11 @@ public class ApplicantPage extends AbstractPage {
     private final By filtersApplyButton = By.xpath("//button[@data-qa='advanced-search-submit-button']");
 
     private final By appliesPage = By.xpath("//div[@data-qa='mainmenu_vacancyResponses']");
-    private final By checkAllApplies = By.xpath("//input[@data-qa='negotiations-item-checkbox-all']");
-    private final By removeAppliesButton = By.xpath("//button[@data-qa='negotiations-batch-remove']");
     private final By favouritesButton = By.xpath("//a[contains(@class, 'container') and contains(@href, 'favorite_vacancies')]");
 
-    private final By removeAppliesConfirmButton = By.xpath("//button[@data-qa='magritte_modal_buttons_delete']");
     private final By resumePageButton = By.xpath("//div[@data-qa='mainmenu_profileAndResumes']");
+
+    private final By optionsButtoon = By.xpath("//button[@data-qa='applicantProfileDesktopDrop-button']");
 
     public static final String[] JOBS = {
             "Менеджер", "Программист", "Дизайнер", "Аналитик", "Маркетолог",
@@ -67,11 +65,8 @@ public class ApplicantPage extends AbstractPage {
     }
 
     public SettingsPage goToSettingsPage() {
-//        By profileButton = By.cssSelector("div[data-qa='mainmenu_applicantProfile']");
-        By profileButton = By.xpath("//div[@data-qa='mainmenu_applicantProfile']");
-        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(profileButton));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(optionsButtoon));
+        driver.findElement(optionsButtoon).click();
 
         wait.until(ExpectedConditions.elementToBeClickable(profileSettingButton));
         driver.findElement(profileSettingButton).click();
@@ -80,11 +75,8 @@ public class ApplicantPage extends AbstractPage {
     }
 
     public WelcomePage logOut() {
-//        By profileButton = By.cssSelector("div[data-qa='mainmenu_applicantProfile']");
-        By profileButton = By.xpath("//div[@data-qa='mainmenu_applicantProfile']");
-        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(profileButton));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(optionsButtoon));
+        driver.findElement(optionsButtoon).click();
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(logoutButton));
         driver.findElement(logoutButton).click();
@@ -199,12 +191,12 @@ public class ApplicantPage extends AbstractPage {
         );
 
         new Actions(driver)
-                .pause(Duration.ofMillis(2000))
+                .pause(Duration.ofMillis(5000))
                 .perform();
 
         wait.until(ExpectedConditions.elementToBeClickable(respondButton)).click();
         new Actions(driver)
-                .pause(Duration.ofMillis(5000))
+                .pause(Duration.ofMillis(1000))
                 .perform();
 
         wait.until(ExpectedConditions.invisibilityOfElementLocated(
