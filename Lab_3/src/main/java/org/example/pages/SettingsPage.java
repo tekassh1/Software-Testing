@@ -65,7 +65,6 @@ public class SettingsPage extends AbstractPage {
         driver.findElement(newPasswordConfirmInput).clear();
         driver.findElement(newPasswordConfirmInput).sendKeys(newPassword);
 
-
         new Actions(driver)
                 .pause(Duration.ofMillis(1000))
                 .click(driver.findElement(passwordSaveButton))

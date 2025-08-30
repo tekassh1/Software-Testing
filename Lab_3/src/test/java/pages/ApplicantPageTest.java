@@ -2,8 +2,6 @@ package pages;
 
 import org.example.pages.*;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -139,11 +137,11 @@ public class ApplicantPageTest extends TestsBase {
             ApplicantPage applicantPage = loginPage.login(hhUsername, hhPass);
 
             String vacancyId = applicantPage.applyRandomVacancy();
-            applicantPage.goToAppliesPage();
+            AppliesPage appliesPage = applicantPage.goToAppliesPage();
 
-            assertTrue(applicantPage.isApplyPresent());
+            assertTrue(appliesPage.isApplyPresent());
 
-            applicantPage.deleteApplication(vacancyId);
+            appliesPage.deleteApplication(vacancyId);
         });
     }
 
@@ -158,18 +156,15 @@ public class ApplicantPageTest extends TestsBase {
             ApplicantPage applicantPage = loginPage.login(hhUsername, hhPass);
 
             String vacancyId = applicantPage.applyRandomVacancy();
-            applicantPage.goToAppliesPage();
+            AppliesPage appliesPage = applicantPage.goToAppliesPage();
 
-            applicantPage.deleteApplication(vacancyId);
+            appliesPage.deleteApplication(vacancyId);
         });
     }
 
     @Test
     public void AddToFeaturedTest() {
         drivers.parallelStream().forEach(driver -> {
-
-//        WebDriver driver = drivers.get(1);
-
             driver.get(URL);
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
@@ -178,9 +173,9 @@ public class ApplicantPageTest extends TestsBase {
             ApplicantPage applicantPage = loginPage.login(hhUsername, hhPass);
 
             String vacancyId = applicantPage.addRandomVacancyToFavorites();
-            applicantPage.goToFavorites();
+            FavouritesPage favouritesPage = applicantPage.goToFavoritesPage();
 
-            assertTrue(applicantPage.isFavoritePresent(vacancyId));
+            assertTrue(favouritesPage.isFavoritePresent(vacancyId));
         });
     }
 
@@ -195,11 +190,11 @@ public class ApplicantPageTest extends TestsBase {
             ApplicantPage applicantPage = loginPage.login(hhUsername, hhPass);
 
             String vacancyId = applicantPage.addRandomVacancyToFavorites();
-            applicantPage.goToFavorites();
 
-            applicantPage.removeFavorite(vacancyId);
+            FavouritesPage favouritesPage = applicantPage.goToFavoritesPage();
+            favouritesPage.removeFavorite(vacancyId);
 
-            assertFalse(applicantPage.isFavoritePresent(vacancyId));
+            assertFalse(favouritesPage.isFavoritePresent(vacancyId));
         });
     }
 

@@ -12,7 +12,6 @@ import java.time.Duration;
 
 public class ResumePage extends AbstractPage {
 
-    private final By geoSwitcherSearchInput = By.xpath("//input[@data-qa='geo-switcher-search']");
     private final By headerTitle = By.xpath("//h4[@data-qa='title']");
     private final By resumeEditButton = By.xpath("//a[@data-qa='resume-edit']");
     private final By downloadResumeButton = By.xpath("//button[@data-qa='resume-download-button']");
@@ -43,7 +42,7 @@ public class ResumePage extends AbstractPage {
 
         driver.findElement(resumeEditButton).click();
         new Actions(driver)
-                .pause(Duration.ofMillis(2000))
+                .pause(Duration.ofMillis(1000))
                 .perform();
     }
 

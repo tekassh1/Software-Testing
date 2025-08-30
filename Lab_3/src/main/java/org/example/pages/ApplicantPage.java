@@ -31,7 +31,7 @@ public class ApplicantPage extends AbstractPage {
     private final By workFormatSwitcher = By.xpath("//input[@data-qa='advanced-search__work_format-item_ON_SITE']");
     private final By filtersApplyButton = By.xpath("//button[@data-qa='advanced-search-submit-button']");
 
-    private final By appliesPage = By.xpath("//div[@data-qa='mainmenu_vacancyResponses']");
+    private final By appliesPageButton = By.xpath("//div[@data-qa='mainmenu_vacancyResponses']");
     private final By favouritesButton = By.xpath("//a[contains(@class, 'container') and contains(@href, 'favorite_vacancies')]");
 
     private final By resumePageButton = By.xpath("//div[@data-qa='mainmenu_profileAndResumes']");
@@ -113,7 +113,7 @@ public class ApplicantPage extends AbstractPage {
         input.sendKeys(vacancy);
         input.sendKeys(Keys.ENTER);
         new Actions(driver)
-                .pause(Duration.ofMillis(2000))
+                .pause(Duration.ofMillis(1000))
                 .perform();
     }
 
@@ -129,7 +129,7 @@ public class ApplicantPage extends AbstractPage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(advancedSearchButton));
         driver.findElement(advancedSearchButton).click();
         new Actions(driver)
-                .pause(Duration.ofMillis(2000))
+                .pause(Duration.ofMillis(1000))
                 .perform();
     }
 
@@ -158,7 +158,7 @@ public class ApplicantPage extends AbstractPage {
 
         driver.findElement(filtersApplyButton).click();
         new Actions(driver)
-                .pause(Duration.ofMillis(2000))
+                .pause(Duration.ofMillis(1000))
                 .perform();
     }
 
@@ -172,122 +172,87 @@ public class ApplicantPage extends AbstractPage {
                 By.xpath("//div[@data-qa='vacancy-serp__vacancy']")
         ));
 
-        WebElement randomVacancy = vacancyItems.get(new Random().nextInt(vacancyItems.size()));
+        int randomIndex = new Random().nextInt(vacancyItems.size());
+        String vacancyId = null;
+        WebElement respondButton = null;
 
-        String vacancyId = randomVacancy.getAttribute("data-vacancy-id");
-        if (vacancyId == null) {
-            WebElement link = randomVacancy.findElement(By.xpath(".//a[@data-qa='serp-item__title']"));
-            String href = link.getAttribute("href");
-            vacancyId = href.substring(href.indexOf("vacancy/") + 8, href.indexOf("?"));
+        for (int attempt = 0; attempt < 3; attempt++) {
+            try {
+                vacancyItems = driver.findElements(By.xpath("//div[@data-qa='vacancy-serp__vacancy']"));
+                WebElement randomVacancy = vacancyItems.get(randomIndex);
+
+                vacancyId = randomVacancy.getAttribute("data-vacancy-id");
+                if (vacancyId == null) {
+                    WebElement link = randomVacancy.findElement(By.xpath(".//a[@data-qa='serp-item__title']"));
+                    String href = link.getAttribute("href");
+                    vacancyId = href.substring(href.indexOf("vacancy/") + 8, href.indexOf("?"));
+                }
+
+                respondButton = randomVacancy.findElement(
+                        By.xpath(".//a[@data-qa='vacancy-serp__vacancy_response']")
+                );
+
+                ((JavascriptExecutor) driver).executeScript(
+                        "arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});",
+                        respondButton
+                );
+
+                wait.until(ExpectedConditions.visibilityOf(respondButton));
+                wait.until(ExpectedConditions.elementToBeClickable(respondButton)).click();
+
+//                try {
+                    WebElement successNotification = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("//div[@data-qa='vacancy-response-success-standard-notification']")
+                    ));
+
+                    WebElement closeButton = wait.until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//div[@data-qa='vacancy-response-success-standard-notification']//button[@data-qa='snackbar-close-action']")
+                    ));
+
+                    closeButton.click();
+
+                    wait.until(ExpectedConditions.invisibilityOf(successNotification));
+//                }
+//                catch (Exception e) {}
+
+                break;
+
+            } catch (StaleElementReferenceException e) {
+                if (attempt == 2) throw e; // Если последняя попытка, пробрасываем исключение
+                try { Thread.sleep(2000); } catch (InterruptedException ie) {} // Ждем перед повторной попыткой
+            }
         }
-
-        WebElement respondButton = randomVacancy.findElement(
-                By.xpath(".//a[@data-qa='vacancy-serp__vacancy_response']")
-        );
-
-        ((JavascriptExecutor) driver).executeScript(
-                "arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});",
-                respondButton
-        );
-
-        new Actions(driver)
-                .pause(Duration.ofMillis(5000))
-                .perform();
-
-        wait.until(ExpectedConditions.elementToBeClickable(respondButton)).click();
-        new Actions(driver)
-                .pause(Duration.ofMillis(1000))
-                .perform();
-
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(
-                By.xpath("//div[contains(@class, 'vacancy-actions_loading')]")
-        ));
 
         return vacancyId;
     }
 
-    public void goToAppliesPage() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(appliesPage));
-        driver.findElement(appliesPage).click();
-        new Actions(driver)
-                .pause(Duration.ofMillis(2000))
-                .perform();
+    public AppliesPage goToAppliesPage() {
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo({ top: 0, behavior: 'smooth' });");
+        wait.until(ExpectedConditions.elementToBeClickable(appliesPageButton)).click();
+        return new AppliesPage(driver, wait).waitUntilLoaded();
     }
 
-    public void goToFavorites() {
-        WebElement favoritesLink = wait.until(ExpectedConditions.presenceOfElementLocated(favouritesButton));
-
+    public FavouritesPage goToFavoritesPage() {
         ((JavascriptExecutor) driver).executeScript("window.scrollTo({ top: 0, behavior: 'smooth' });");
 
-        wait.until(ExpectedConditions.visibilityOf(favoritesLink));
-
-        driver.findElement(favouritesButton).click();
-
-        new Actions(driver)
-                .pause(Duration.ofMillis(2000))
-                .perform();
-    }
-
-    public boolean isApplyPresent() {
-        List<WebElement> items = driver.findElements(By.xpath("//*[@data-qa='negotiations-item']"));
-        return !items.isEmpty();
-    }
-
-    public void deleteApplication(String vacancyId) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-
-        By vacancyLocator = By.xpath(
-                "//div[@data-qa='negotiations-item']" +
-                        "[.//a[contains(@href, 'vacancy/" + vacancyId + "')]]"
-        );
-
-        WebElement vacancyItem = wait.until(
-                ExpectedConditions.presenceOfElementLocated(vacancyLocator)
-        );
-
-        By checkboxLocator = By.xpath(
-                ".//input[@data-qa='negotiations-item-checkbox']"
-        );
-
-        WebElement checkbox = vacancyItem.findElement(checkboxLocator);
-
-        ((JavascriptExecutor) driver).executeScript(
-                "arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});" +
-                        "arguments[0].click();",
-                checkbox
-        );
-
-        WebElement deleteButton = wait.until(driver -> {
-            WebElement btn = driver.findElement(
-                    By.xpath("//button[@data-qa='negotiations-batch-remove']")
-            );
-            return btn.isEnabled() ? btn : null;
-        });
-
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", deleteButton);
-
-        WebElement confirmButton = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        By.xpath("//button[@data-qa='magritte_modal_buttons_delete']")
-                )
-        );
-        confirmButton.click();
-    }
-
-    public boolean isApplicationPresent(String vacancyId) {
         try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-
-            By vacancyLocator = By.xpath(
-                    "//div[@data-qa='negotiations-item']" +
-                            "[.//a[contains(@href, 'vacancy/" + vacancyId + "')]]"
-            );
-
-            return wait.until(ExpectedConditions.visibilityOfElementLocated(vacancyLocator)) != null;
-
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                    By.xpath("//div[contains(@class, 'bloko-notification__plate')]")
+            ));
         } catch (TimeoutException e) {
-            return false;
+            try {
+                WebElement closeButton = driver.findElement(
+                        By.xpath("//div[contains(@class, 'bloko-notification__plate')]//button[contains(@class, 'close')]")
+                );
+                closeButton.click();
+            } catch (Exception exp) {
+            }
         }
+
+        WebElement favoritesButton = wait.until(ExpectedConditions.elementToBeClickable(favouritesButton));
+        favoritesButton.click();
+
+        return new FavouritesPage(driver, wait).waitUntilLoaded();
     }
 
     public String addRandomVacancyToFavorites() {
@@ -315,63 +280,17 @@ public class ApplicantPage extends AbstractPage {
                 randomVacancy
         );
 
-        new Actions(driver)
-                .pause(Duration.ofMillis(2000))
-                .perform();
-
+        wait.until(ExpectedConditions.elementToBeClickable(favoriteButton));
         favoriteButton.click();
 
         try {
             WebElement closeButton = wait.until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//div[@data-qa='notification-close-button']")
             ));
-
             closeButton.click();
-            new Actions(driver)
-                    .pause(Duration.ofMillis(2000))
-                    .perform();
         } catch (Exception e) {}
 
         return vacancyId;
-    }
-
-    public void removeFavorite(String vacancyId) {
-        try {
-            String cardXpath = "//div[@data-qa='vacancy-serp__vacancy' and " +
-                    ".//a[contains(@href, 'vacancyId=" + vacancyId + "')]]";
-
-            WebElement vacancyCard = wait.until(
-                    ExpectedConditions.presenceOfElementLocated(By.xpath(cardXpath))
-            );
-
-            ((JavascriptExecutor) driver).executeScript(
-                    "arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});",
-                    vacancyCard
-            );
-
-            WebElement removeButton = wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            vacancyCard.findElement(
-                                    By.xpath(".//button[@aria-label='Удалить из избранного']")
-                            )
-                    )
-            );
-
-            try {
-                removeButton.click();
-            } catch (ElementClickInterceptedException e) {
-                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", removeButton);
-            }
-
-        } catch (TimeoutException e) {}
-    }
-
-    public boolean isFavoritePresent(String vacancyId) {
-        driver.navigate().refresh();
-        List<WebElement> responseButtons = driver.findElements(By.xpath(
-                "//a[contains(@href, 'vacancyId=" + vacancyId + "')]"
-        ));
-        return !responseButtons.isEmpty();
     }
 
     public ResumePage goToResumePage() {

@@ -1,6 +1,7 @@
 package org.example.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -54,7 +55,10 @@ public class WelcomePage extends AbstractPage {
 
         } catch (Exception e) {}
 
-
+        ((JavascriptExecutor) driver).executeScript(
+                "var iframe = document.querySelector('iframe.uxfeedback-widget');" +
+                        "if (iframe) iframe.remove();"
+        );
         driver.findElement(loginButton).click();
 
         try {
